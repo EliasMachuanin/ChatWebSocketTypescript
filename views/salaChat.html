@@ -52,11 +52,18 @@
       <button id="enviar" type="submit" class="btn btn-success">Enviar</button>
     </div>
   </div>
+  <br>
+  <Form action = "/" method = "GET">
+    <center>
+      <button id="Desconectarse" type="submit" class="btn btn-danger">Desconectarse</button>
+    </center>
+  </Form>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
   <script type="text/javascript">
     var socket = io();
     document.getElementById("enviar").addEventListener("click", n1);
+    document.getElementById("Desconectarse").addEventListener("click", n2);
 
       function n1() {
         var a = document.getElementById('presentacion').innerHTML
@@ -65,8 +72,22 @@
         socket.emit('nuevoMensaje', {text: chat.value, timestamp: new Date(), salida: a});
         chat.value = ""
       }
+
+      function n2() {
+        var a = document.getElementById('presentacion').innerHTML
+        a = a.replace("Bienvenido ", "");
+        a = a.replace("!", "");
+        socket.emit('usuarioDesconexion', {timestamp: new Date(), salida: a});
+      }
+
     socket.on('nuevoMensaje', (data) => {
         $('#mensajes').append($('<li>').text(data.salida + ": " + data.text +  " ||    " + data.timestamp));
+    })
+    socket.on('nuevoUsuarioConectado', (data) => {
+        $('#mensajes').append($('<li>').text(data.salida + " se ha conectado." +  " ||    " + data.timestamp));
+    })
+    socket.on('usuarioDesconexion', (data) => {
+        $('#mensajes').append($('<li>').text(data.salida + " se ha desconectado." +  " ||    " + data.timestamp));
     })
 
   </script>

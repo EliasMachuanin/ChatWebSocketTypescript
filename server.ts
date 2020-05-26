@@ -16,11 +16,19 @@ app.get('/', function(req, res){
   app.post('/',function(req,res){
     var entrada = req.body.textbox;
     res.render('salaChat',{locals:{salida: entrada}});
+    io.emit('nuevoUsuarioConectado', {timestamp: new Date(), salida: entrada});
+
 });
 
 io.on('connection', function(socket){
   socket.on('nuevoMensaje', (data) => {
       io.emit('nuevoMensaje', data)
+  })
+  socket.on('nuevoUsuarioConectado', (data) => {
+    io.emit('nuevoUsuarioConectado', data)
+})
+  socket.on('usuarioDesconexion', (data) => {
+    io.emit('usuarioDesconexion', data)
   })
 });
 
